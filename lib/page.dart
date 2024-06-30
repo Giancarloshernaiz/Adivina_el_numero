@@ -96,8 +96,41 @@ class _MyHomePageState extends State<MyHomePage> {
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onSubmitted: (String val) {
                       setState(() {
-                        if (!(int.parse(val) < 1) ||
-                            !(int.parse(val) > _rangoActual)) {
+                        if (val.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Center(
+                                child: Text(
+                                  'El campo de texto no puede estar vacío!',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              backgroundColor: Colors.amber[700],
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                        if (int.parse(val) < 1 ||
+                            int.parse(val) > _rangoActual) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Center(
+                                child: Text(
+                                  'El número ingresado está fuera de rango (1 - $_rangoActual)',
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              backgroundColor: Colors.amber[700],
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        } else {
                           _intentoActual--;
 
                           if (int.parse(val) != randomNumber) {
@@ -113,6 +146,22 @@ class _MyHomePageState extends State<MyHomePage> {
                             _intentoActual =
                                 _intentos[_dificultadActual.toInt() - 1];
                             randomNumber = Random().nextInt(10) + 1;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Center(
+                                  child: Text(
+                                    'Ganaste!',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                backgroundColor: Colors.green[700],
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
                           }
 
                           if (_intentoActual < 1) {
@@ -121,6 +170,21 @@ class _MyHomePageState extends State<MyHomePage> {
                             _mayorQue.clear();
                             _intentoActual =
                                 _intentos[_dificultadActual.toInt() - 1];
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Center(
+                                  child: Text(
+                                    'Perdiste! El número era: $randomNumber',
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                backgroundColor: Colors.red[700],
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
                             randomNumber = Random().nextInt(10) + 1;
                           }
                         }
