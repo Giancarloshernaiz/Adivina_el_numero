@@ -22,23 +22,43 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _controller = TextEditingController();
-
-  final List<String> _dificultades = ["Fácil", "Medio", "Avanzado", "Extremo"];
-  double _dificultadActual = 1;
-
-  final List<int> _intentos = [5, 8, 15, 25];
-  int _intentoActual = 5;
-
-  final List<int> _rangos = [10, 20, 100, 1000];
-  int _rangoActual = 10;
-
-  int randomNumber = Random().nextInt(10) + 1;
-
+  final List<Object> _historial = [];
   final List<String> _menorQue = [];
   final List<String> _mayorQue = [];
-  final List<Object> _historial = [];
-
+  final List<String> _dificultades = ["Fácil", "Medio", "Avanzado", "Extremo"];
+  final List<int> _intentos = [5, 8, 15, 25];
+  final List<int> _rangos = [10, 20, 100, 1000];
   final _focusNode = FocusNode();
+  double _dificultadActual = 1;
+  int _intentoActual = 5;
+  int _rangoActual = 10;
+  int randomNumber = Random().nextInt(10) + 1;
+
+  void showMessage(String value, color, text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Center(
+          child: Text(
+            value,
+            style: TextStyle(
+                color: text, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        backgroundColor: color,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void reset(val, result) {
+    setState(() {
+      _historial.add(Object(value: val, result: result));
+      _menorQue.clear();
+      _mayorQue.clear();
+      _intentoActual = _intentos[_dificultadActual.toInt() - 1];
+      randomNumber = Random().nextInt(_rangoActual) + 1;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +95,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: TextField(
                     focusNode: _focusNode,
                     controller: _controller,
+                    style: const TextStyle(color: Colors.white),
                     cursorColor: Colors.blue,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
+                      hintText: "1 - $_rangoActual ",
+                      hintStyle: const TextStyle(color: Colors.grey),
                       labelText: "Ingrese un número: ",
                       labelStyle: const TextStyle(
                           color: Colors.white,
@@ -89,50 +114,25 @@ class _MyHomePageState extends State<MyHomePage> {
                         borderSide: BorderSide(
                             color: Colors.blue), // Set focused border color
                       ),
-                      hintText: "1 - $_rangoActual ",
-                      hintStyle: const TextStyle(color: Colors.grey),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onSubmitted: (String val) {
                       setState(() {
                         if (val.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Center(
-                                child: Text(
-                                  'El campo de texto no puede estar vacío!',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              backgroundColor: Colors.amber[700],
-                              duration: const Duration(seconds: 2),
-                            ),
+                          showMessage(
+                            'El campo de texto no puede estar vacío!',
+                            Colors.amber[600],
+                            Colors.black,
                           );
                         }
                         if (int.parse(val) < 1 ||
                             int.parse(val) > _rangoActual) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Center(
-                                child: Text(
-                                  'El número ingresado está fuera de rango (1 - $_rangoActual)',
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              backgroundColor: Colors.amber[700],
-                              duration: const Duration(seconds: 2),
-                            ),
+                          showMessage(
+                            'El número ingresado está fuera de rango (1 - $_rangoActual)',
+                            Colors.amber[600],
+                            Colors.black,
                           );
                         } else {
                           _intentoActual--;
-
                           if (int.parse(val) != randomNumber) {
                             if (int.parse(val) > randomNumber) {
                               _menorQue.add(val);
@@ -140,59 +140,26 @@ class _MyHomePageState extends State<MyHomePage> {
                               _mayorQue.add(val);
                             }
                           } else {
-                            _historial.add(Object(value: val, result: true));
-                            _menorQue.clear();
-                            _mayorQue.clear();
-                            _intentoActual =
-                                _intentos[_dificultadActual.toInt() - 1];
-                            randomNumber = Random().nextInt(10) + 1;
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Center(
-                                  child: Text(
-                                    'Ganaste!',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                backgroundColor: Colors.green[700],
-                                duration: const Duration(seconds: 2),
-                              ),
+                            showMessage(
+                              "¡Ganaste!",
+                              Colors.green[600],
+                              Colors.white,
                             );
+                            reset(val, true);
                           }
-
                           if (_intentoActual < 1) {
-                            _historial.add(Object(value: val, result: false));
-                            _menorQue.clear();
-                            _mayorQue.clear();
-                            _intentoActual =
-                                _intentos[_dificultadActual.toInt() - 1];
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Center(
-                                  child: Text(
-                                    'Perdiste! El número era: $randomNumber',
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                backgroundColor: Colors.red[700],
-                                duration: const Duration(seconds: 2),
-                              ),
+                            showMessage(
+                              'Perdiste! El número era: $randomNumber',
+                              Colors.red[700],
+                              Colors.white,
                             );
-                            randomNumber = Random().nextInt(10) + 1;
+                            reset(val, false);
                           }
                         }
                         _focusNode.requestFocus();
                       });
                       _controller.clear();
                     },
-                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
                 Intentos(_intentoActual),
