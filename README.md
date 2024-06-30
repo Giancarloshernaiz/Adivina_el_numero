@@ -7,7 +7,7 @@ dificultad ajustándose según el nivel seleccionado por el usuario.
 
 ## Elaborado por
 
-- [Giancarlos Hernaiz] (<https://github.com/Giancarloshernaiz>)
+- [Giancarlos Hernaiz](<https://github.com/Giancarloshernaiz>)
 
 ## Niveles de dificultad
 
