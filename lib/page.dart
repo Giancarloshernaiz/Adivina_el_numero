@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                  width: 400,
+                  width: MediaQuery.of(context).size.width * 0.6,
                   child: TextField(
                     focusNode: _focusNode,
                     controller: _controller,

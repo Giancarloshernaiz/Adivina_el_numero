@@ -12,7 +12,7 @@ class _MenorQueState extends State<MenorQue> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 200,
+      width: MediaQuery.of(context).size.width * 0.3,
       height: 300,
       child: Card(
         color: Colors.grey[800],
